@@ -531,7 +531,7 @@
 <script>
 const SHEET_ID = '19Cre7ISF8_950CXFLynsdehmbEXxRwYTg4vGR0Xy8w0';
 const API_KEY = 'AIzaSyAMbP4lEUWSglPTac37MIUFsj3BaRe44gQ';
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPiAHg7TqayjlUJrLTVRhcSAaJ0dha68Uv3xLZ1HQDgz2dvqsqt88qv9ec_P9g9qOt/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwVc5pgAlPui5LvU6LCTWh3JJqD2E_mKepcn6Q1DYbY7HyllGK361HobiKWN0eyMIn9ng/exec';
 const SHEET_NAME = 'Sheet1';
 
 const FLOOR_IMAGES = {
@@ -557,51 +557,15 @@ async function saveToSheets(action, emp) {
   try {
     const floorToNum = {'קומת קרקע':'1',"קומה א'":'2',"קומה ב'":'3',"קומה ג'":'4'};
     const floorNum = floorToNum[emp.floor] || emp.floor;
-    
-    // Get all rows to find the row index
-    const readUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1?key=${API_KEY}`;
-    const res = await fetch(readUrl);
-    const data = await res.json();
-    const rows = data.values || [];
-    
-    if (action === 'delete') {
-      // Find row and clear it
-      for (let i = 1; i < rows.length; i++) {
-        if (rows[i][0] === emp.name) {
-          const clearUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A${i+1}:C${i+1}:clear?key=${API_KEY}`;
-          await fetch(clearUrl, { method: 'POST' });
-          console.log('✅ Deleted from Sheets:', emp.name);
-          return;
-        }
-      }
-    } else {
-      // Find existing row or append
-      let rowIndex = -1;
-      for (let i = 1; i < rows.length; i++) {
-        if (rows[i][0] === emp.name) { rowIndex = i + 1; break; }
-      }
-      
-      if (rowIndex > 0) {
-        // Update existing row
-        const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A${rowIndex}:C${rowIndex}?valueInputOption=RAW&key=${API_KEY}`;
-        await fetch(updateUrl, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ values: [[emp.name, floorNum, emp.seat]] })
-        });
-      } else {
-        // Append new row
-        const appendUrl = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A:C:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS&key=${API_KEY}`;
-        await fetch(appendUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ values: [[emp.name, floorNum, emp.seat]] })
-        });
-      }
-      console.log('✅ Saved to Sheets:', emp.name, floorNum, emp.seat);
-    }
+    const url = SCRIPT_URL + 
+      '?action=' + encodeURIComponent(action) +
+      '&name=' + encodeURIComponent(emp.name) +
+      '&floor=' + encodeURIComponent(floorNum) +
+      '&seat=' + encodeURIComponent(emp.seat);
+    fetch(url, { mode: 'no-cors' }).catch(()=>{});
+    console.log('✅ Sent to Sheets:', action, emp.name, floorNum, emp.seat);
   } catch(e) {
-    console.log('Sheets API error:', e);
+    console.log('Sheets sync error:', e);
   }
 }
 function loadLocal() {
