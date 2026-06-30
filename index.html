@@ -437,17 +437,15 @@
 </style>
 <script>
 (function() {
-  const CORRECT_PASSWORD = "1234";
-  const STORAGE_KEY = "seatfinder_auth_ok";
-  if (localStorage.getItem(STORAGE_KEY) === "true") return;
-  document.documentElement.style.visibility = "hidden";
-  function buildOverlay() {
-    document.body.classList.add('pw-locked');
-    const overlay = document.createElement('div');
-    overlay.className = 'pw-overlay';
-    overlay.innerHTML = `
-      <div class="pw-box">
-        <h2>🔒 גישה מוגבלת</h2>
+const CORRECT_PASSWORD = "1234";
+document.documentElement.style.visibility = "hidden";
+function buildOverlay() {
+  document.body.classList.add('pw-locked');
+  const overlay = document.createElement('div');
+  overlay.className = 'pw-overlay';
+  overlay.innerHTML = `
+    <div class="pw-box">
+      <h2>🔒 גישה מוגבלת</h2>
         <p>יש להזין סיסמה כדי להמשיך</p>
         <input type="password" id="pwInput" placeholder="הקלד סיסמה..." autofocus>
         <button id="pwSubmit">כניסה</button>
