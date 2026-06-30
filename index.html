@@ -456,7 +456,6 @@ function buildOverlay() {
     const input = document.getElementById('pwInput');
     function tryUnlock() {
       if (input.value === CORRECT_PASSWORD) {
-        localStorage.setItem(STORAGE_KEY, "true");
         document.body.classList.remove('pw-locked');
         overlay.remove();
       } else {
